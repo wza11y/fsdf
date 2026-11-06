@@ -74,7 +74,8 @@ describe('parseDishes', () => {
   })
 
   it('throws SchemaError when steps are missing', () => {
-    const { steps: _steps, ...withoutSteps } = makeDish()
+    const withoutSteps = makeDish()
+    delete (withoutSteps as Record<string, unknown>).steps
 
     expect(() => parseDishes([withoutSteps])).toThrow(SchemaError)
   })

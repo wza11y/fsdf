@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useReducer } from 'react'
 import { Drawer } from './Drawer'
 import { loadHistory, removeGeneration } from '@/lib/storage'
 import type { Generation } from '@/lib/types'
@@ -23,11 +23,8 @@ export function HistoryDrawer({
   onClose,
   onRestore,
 }: HistoryDrawerProps) {
-  const [history, setHistory] = useState<Generation[]>([])
-
-  useEffect(() => {
-    if (open) setHistory(loadHistory())
-  }, [open])
+  const [, refresh] = useReducer((value: number) => value + 1, 0)
+  const history: Generation[] = open ? loadHistory() : []
 
   return (
     <Drawer open={open} onClose={onClose} title="历史记录">
@@ -59,7 +56,7 @@ export function HistoryDrawer({
                 aria-label={`删除 ${entry.theme}`}
                 onClick={() => {
                   removeGeneration(entry.id)
-                  setHistory(loadHistory())
+                  refresh()
                 }}
                 className="shrink-0 text-xs text-kitchen-muted transition hover:text-kitchen-ink"
               >

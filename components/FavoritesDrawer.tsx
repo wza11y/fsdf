@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useReducer } from 'react'
 import { Drawer } from './Drawer'
 import { loadFavorites } from '@/lib/storage'
 import type { Dish } from '@/lib/types'
@@ -16,15 +16,12 @@ export function FavoritesDrawer({
   onClose,
   onToggleFavorite,
 }: FavoritesDrawerProps) {
-  const [favorites, setFavorites] = useState<Dish[]>([])
-
-  useEffect(() => {
-    if (open) setFavorites(loadFavorites())
-  }, [open])
+  const [, refresh] = useReducer((value: number) => value + 1, 0)
+  const favorites: Dish[] = open ? loadFavorites() : []
 
   function handleRemove(dish: Dish) {
     onToggleFavorite(dish)
-    setFavorites(loadFavorites())
+    refresh()
   }
 
   return (
