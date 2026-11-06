@@ -1,6 +1,11 @@
 'use client'
 
-import { useEffect, useState, type TransitionEvent as ReactTransitionEvent } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type TransitionEvent as ReactTransitionEvent,
+} from 'react'
 import { pickIndex } from '@/lib/roulette'
 import type { Dish } from '@/lib/types'
 
@@ -26,16 +31,23 @@ export function RouletteWheel({
   const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [resultIndex, setResultIndex] = useState<number | null>(null)
 
+  const close = useCallback(() => {
+    setSpinning(false)
+    setPendingIndex(null)
+    setResultIndex(null)
+    onClose()
+  }, [onClose])
+
   useEffect(() => {
     if (!open) return
 
     function handleKey(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') close()
     }
 
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [open, onClose])
+  }, [open, close])
 
   if (!open) return null
 
@@ -104,7 +116,7 @@ export function RouletteWheel({
           <h2 className="font-serif text-xl text-kitchen-ink">让转盘决定</h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             aria-label="关闭"
             className="text-sm text-kitchen-muted transition hover:text-kitchen-ink"
           >

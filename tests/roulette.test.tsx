@@ -139,4 +139,49 @@ describe('RouletteWheel', () => {
     expect(onPick).toHaveBeenCalledTimes(1)
     expect(onPick).toHaveBeenCalledWith(0)
   })
+
+  it('resets a spin that is closed mid-way', () => {
+    Object.defineProperty(window, 'matchMedia', {
+      value: vi.fn().mockReturnValue({ matches: false }),
+      configurable: true,
+    })
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+    const onClose = vi.fn()
+    const onPick = vi.fn()
+
+    const { rerender } = render(
+      <RouletteWheel
+        dishes={makeDishes(8)}
+        open
+        onClose={onClose}
+        onPick={onPick}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: '转盘替我选' }))
+    expect(screen.getByRole('button', { name: '转着…' })).toBeDisabled()
+
+    fireEvent.click(screen.getByRole('button', { name: '关闭' }))
+    expect(onClose).toHaveBeenCalled()
+
+    rerender(
+      <RouletteWheel
+        dishes={makeDishes(8)}
+        open={false}
+        onClose={onClose}
+        onPick={onPick}
+      />,
+    )
+    rerender(
+      <RouletteWheel
+        dishes={makeDishes(8)}
+        open
+        onClose={onClose}
+        onPick={onPick}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: '转盘替我选' })).toBeEnabled()
+    expect(onPick).not.toHaveBeenCalled()
+  })
 })
