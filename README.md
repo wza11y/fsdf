@@ -12,7 +12,7 @@
 
 ## 快速开始
 
-需要 Node.js 20+。
+需要 Node.js 20+。本地运行和 Vercel 部署都可以，部署见下文。
 
 ```bash
 npm install
@@ -37,15 +37,28 @@ npm run dev
 
 ## 防护
 
-这是本地私用工具，不是公开服务：
-
 - 访问口令会换成一个 HttpOnly、30 天有效的签名 cookie，页面和 API 都校验
 - `ACCESS_CODE` 没配置时默认拒绝一切访问（fail closed）
-- 只接受 `localhost` / `127.0.0.1` 的 Origin 和 Host
+- 只接受同源请求：`Origin` 必须和本站 `Host` 一致（CSRF 防护）
 - 同一 IP 每分钟最多 3 次生成，全局每天最多 50 次
 - API Key 和口令只在服务端环境变量里，不会进入浏览器
 
-不要把 `npm run dev` 改成监听 `0.0.0.0`，也不要用内网穿透临时暴露端口。
+口令是给信任的人共用的。公开部署后，任何拿到口令的人都能消耗你的 DeepSeek 额度，所以建议在 DeepSeek 账号里设置消费上限。
+
+部署到 Vercel 后，限流计数存在单个实例的内存里，只能算尽力而为；真正的门槛是访问口令。
+
+## 部署到 Vercel
+
+1. Vercel → Add New Project → 导入这个 GitHub 仓库
+2. Framework 会自动识别为 Next.js，构建命令和输出目录保持默认
+3. 在 Environment Variables 里配置：
+   - `DEEPSEEK_API_KEY`（必填）
+   - `ACCESS_CODE`（必填，自己定一个足够长的口令）
+   - `DEEPSEEK_MODEL`（可选，默认 `deepseek-chat`）
+   - `DEEPSEEK_BASE_URL`（可选，默认 `https://api.deepseek.com`）
+4. Deploy。之后把站点链接和口令发给要用的人。
+
+不要把 `.env.local` 提交到仓库；Vercel 的环境变量只在后台保存。
 
 ## 命令
 

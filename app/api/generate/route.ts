@@ -19,7 +19,28 @@ const bodySchema = z.object({
   taste: z.enum(['下饭', '清淡', '高蛋白']).optional(),
 })
 
-const ALLOWED_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]'])
+function isSameOriginRequest(request: Request): boolean {
+  const origin = request.headers.get('origin')
+
+  // Non-browser callers (and same-origin navigations) may omit Origin.
+  // The access-code cookie still gates every request.
+  if (!origin) return true
+
+  let originHost: string
+
+  try {
+    originHost = new URL(origin).host
+  } catch {
+    return false
+  }
+
+  const requestHost =
+    request.headers.get('x-forwarded-host') ?? request.headers.get('host')
+
+  if (!requestHost) return false
+
+  return originHost === requestHost
+}
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -44,30 +65,6 @@ function readCookie(request: Request, name: string): string | undefined {
   return undefined
 }
 
-function isLocalRequest(request: Request): boolean {
-  const origin = request.headers.get('origin')
-
-  if (origin) {
-    try {
-      const { hostname } = new URL(origin)
-      if (!ALLOWED_HOSTS.has(hostname)) return false
-    } catch {
-      return false
-    }
-  }
-
-  const hostHeader = request.headers.get('host')
-
-  if (hostHeader) {
-    const host = hostHeader.startsWith('[')
-      ? hostHeader.slice(0, hostHeader.indexOf(']') + 1)
-      : hostHeader.split(':')[0]
-
-    if (!ALLOWED_HOSTS.has(host)) return false
-  }
-
-  return true
-}
 
 export async function POST(request: Request): Promise<Response> {
   const accessCode = process.env.ACCESS_CODE
@@ -80,8 +77,8 @@ export async function POST(request: Request): Promise<Response> {
     return fail('UNAUTHORIZED', '请先输入访问口令', 401)
   }
 
-  if (!isLocalRequest(request)) {
-    return fail('BAD_ORIGIN', '只允许本机访问', 403)
+  if (!isSameOriginRequest(request)) {
+    return fail('BAD_ORIGIN', '请求来源不合法', 403)
   }
 
   let payload: unknown

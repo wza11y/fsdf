@@ -16,7 +16,7 @@ const VALID_BODY = { theme: '想吃清淡高蛋白' }
 
 function generateRequest(
   body: unknown,
-  options: { auth?: boolean; origin?: string } = {},
+  options: { auth?: boolean; origin?: string; host?: string } = {},
 ) {
   const headers: Record<string, string> = {
     'content-type': 'application/json',
@@ -28,6 +28,7 @@ function generateRequest(
   }
 
   if (options.origin) headers.origin = options.origin
+  if (options.host) headers.host = options.host
 
   return new Request('http://localhost/api/generate', {
     method: 'POST',
@@ -70,11 +71,26 @@ describe('POST /api/generate', () => {
 
   it('rejects a foreign origin', async () => {
     const response = await POST(
-      generateRequest(VALID_BODY, { origin: 'https://evil.com' }),
+      generateRequest(VALID_BODY, {
+        origin: 'https://evil.com',
+        host: 'fsdf.vercel.app',
+      }),
     )
 
     expect(response.status).toBe(403)
     expect(mockGenerate).not.toHaveBeenCalled()
+  })
+
+  it('accepts a same-origin request on a deployed host', async () => {
+    const response = await POST(
+      generateRequest(VALID_BODY, {
+        origin: 'https://fsdf.vercel.app',
+        host: 'fsdf.vercel.app',
+      }),
+    )
+
+    expect(response.status).toBe(200)
+    expect(mockGenerate).toHaveBeenCalledTimes(1)
   })
 
   it('returns MISSING_API_KEY when the key is absent', async () => {
