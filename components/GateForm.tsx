@@ -55,7 +55,7 @@ export function GateForm() {
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
       <label
         htmlFor="access-code"
-        className="block text-sm font-medium text-stone-700"
+        className="block text-sm font-medium text-kitchen-ink"
       >
         访问口令
       </label>
@@ -66,12 +66,12 @@ export function GateForm() {
         onChange={(event) => setCode(event.target.value)}
         placeholder="输入口令才能进入厨房"
         autoComplete="current-password"
-        className="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-stone-900 outline-none transition focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10"
+        className="w-full rounded-xl border border-kitchen-line bg-white px-4 py-3 text-kitchen-ink outline-none transition focus:border-kitchen-chili focus:ring-2 focus:ring-kitchen-chili/15"
       />
       <button
         type="submit"
         disabled={!code.trim() || pending}
-        className="w-full rounded-xl bg-stone-900 px-4 py-3 font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-full rounded-xl bg-kitchen-chili px-4 py-3 font-medium text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {pending ? '验证中…' : '进入'}
       </button>

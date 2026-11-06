@@ -18,7 +18,7 @@ type RouletteWheelProps = {
 
 const SPIN_MS = 3000
 const TURNS = 4
-const SLICE_COLORS = ['#231c16', '#1b1611']
+const SLICE_COLORS = ['#f7f0e5', '#efe4d4']
 
 export function RouletteWheel({
   dishes,

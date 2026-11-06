@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --kitchen-bg: #14100d;
-  --kitchen-surface: #1e1813;
-  --kitchen-surface-2: #262019;
-  --kitchen-line: #3a3028;
-  --kitchen-ink: #f4ead9;
-  --kitchen-muted: #a6957f;
-  --kitchen-chili: #ff5a36;
-  --kitchen-ginger: #f0b24a;
+  --kitchen-bg: #ffffff;
+  --kitchen-surface: #faf6ef;
+  --kitchen-surface-2: #f0e8db;
+  --kitchen-line: #e2d7c6;
+  --kitchen-ink: #1c1712;
+  --kitchen-muted: #6f6354;
+  --kitchen-chili: #c93e22;
+  --kitchen-ginger: #8f5a0b;
   --font-sans-stack: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif-stack: "Songti SC", "STSong", "Noto Serif SC", "SimSun",
@@ -29,14 +29,14 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background-color: var(--kitchen-bg);
   background-image: radial-gradient(
     70% 45% at 50% -10%,
-    rgba(255, 90, 54, 0.1),
+    rgba(201, 62, 34, 0.06),
     transparent 70%
   );
   background-repeat: no-repeat;
